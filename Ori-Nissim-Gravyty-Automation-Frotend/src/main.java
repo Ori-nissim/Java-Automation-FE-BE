@@ -57,58 +57,59 @@ public class main {
 
 		// Find the button using css selector
 		WebElement signInButton = driver
-				.findElement(By.cssSelector("a.nav__button-secondary.btn-md.btn-secondary-emphasis"));
+				.findElement(By.cssSelector(Selectors.SIGN_IN_BUTTON_SELECTOR));
 		signInButton.click();
 
-		WebElement usernameField = driver.findElement(By.id("username"));
+		WebElement usernameField = driver.findElement(By.id(Selectors.USERNAME_FIELD_SELECTOR));
 		usernameField.sendKeys(USERNAME);
 
-		WebElement passwordField = driver.findElement(By.id("password"));
+		WebElement passwordField = driver.findElement(By.id(Selectors.PASSWORD_FIELD_SELECTOR));
 		passwordField.sendKeys(PASSWORD);
 
 		// Find the button using css selector
-		signInButton = driver.findElement(By.cssSelector("button.btn__primary--large.from__button--floating"));
-		signInButton.click();
-
-		// Wait for the browser to load
-		Thread.sleep(2000);
-		WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"ember17\"]"));
+		WebElement submitButton = driver.findElement(By.cssSelector(Selectors.SUBMIT_LOGIN_BUTTON_SELECTOR));
 		submitButton.click();
+
 	}
 
 	@Test(description = "Open profile and extract data", priority = 3)
 	public static void testGetDataFromProfile() throws InterruptedException {
+		// Wait for the browser to load
+		Thread.sleep(2000);
+		WebElement profilePicture = driver.findElement(By.xpath(Selectors.PROFILE_PIC_SELECTOR));
+		profilePicture.click();
+		
 		Thread.sleep(2000); // wait for the browser to open
-		WebElement viewProfile = driver.findElement(By.linkText("View Profile"));
+		WebElement viewProfile = driver.findElement(By.linkText(Selectors.VIEW_PROFILE_LINK_SELECTOR));
 		viewProfile.click();
 
 		// Wait for the browser to load
 		Thread.sleep(2000);
 
 		WebElement nameElement = driver
-				.findElement(By.cssSelector("h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words"));
+				.findElement(By.cssSelector(Selectors.PROFILE_NAME_SELECTOR));
 		user.setName(nameElement.getText());
 
 		WebElement cityElement = driver
-				.findElement(By.cssSelector("span.text-body-small.inline.t-black--light.break-words"));
+				.findElement(By.cssSelector(Selectors.PROFILE_CITY_SELECTOR));
 		user.setCity(cityElement.getText());
 
 		WebElement experienceSection = driver
-				.findElement(By.cssSelector("section.artdeco-card.pv-profile-card.break-words"));
+				.findElement(By.cssSelector(Selectors.EXPERIENCE_SECTION_SELECTOR));
 		List<WebElement> companyElements = experienceSection.findElements(By.tagName("li"));
 		WebElement workplaceElement = companyElements.get(0).findElement(By.xpath(
-				"//*[@id=\"profile-content\"]/div/div[2]/div/div/main/section[6]/div[3]/ul/li[1]/div/div[2]/div[1]/div/span[1]/span[1]"));
+				Selectors.WORKPLACE_ELEMENT_SELECTOR));
 		user.setWorkplace(workplaceElement.getText());
 
 		// wait for the browser to load
 		Thread.sleep(3000);
 	}
 
-	@Test(description = "Navigate to connections page and get the first page data, the print it as JSON", priority = 4)
+	@Test(description = "Navigate to connections page and get the first page data, then print it as JSON", priority = 4)
 	public static void testGetConnectionsData() throws InterruptedException, JsonProcessingException {
 
 		// Go to connections page
-		WebElement myNetwork = driver.findElement(By.xpath("/html/body/div[5]/header/div/nav/ul/li[2]/a"));
+		WebElement myNetwork = driver.findElement(By.xpath(Selectors.MY_NETWORK_BUTTON_SELECTOR));
 		myNetwork.click();
 
 		// Wait for the browser to load
@@ -116,14 +117,14 @@ public class main {
 
 		// Go to connections list
 		WebElement myConnectionsButton = driver
-				.findElement(By.cssSelector("div.mn-community-summary__info-container.t-black.t-16.t-normal"));
+				.findElement(By.cssSelector(Selectors.CONNECTIONS_BUTTON_SELECTOR));
 		myConnectionsButton.click();
 
 		// Wait for the browser to load
 		Thread.sleep(3000);
 
 		// Get connection list
-		List<WebElement> connectionList = driver.findElements(By.className("mn-connection-card__details"));
+		List<WebElement> connectionList = driver.findElements(By.className(Selectors.CONNECTION_LIST_SELECTOR));
 
 		if (connectionList.isEmpty())
 			throw new NullPointerException("List is empty, No Connections to this user!");
@@ -158,15 +159,15 @@ public class main {
 		try {
 			// Get name
 			WebElement connectionName = listItem
-					.findElement(By.cssSelector("span.mn-connection-card__name.t-16.t-black.t-bold"));
+					.findElement(By.cssSelector(Selectors.CONNECTION_NAME_SELECTOR));
 			connectionData.setFullName(connectionName.getText());
 			// Get occupation
 			WebElement connectionOccupation = listItem
-					.findElement(By.cssSelector("span.mn-connection-card__occupation.t-14.t-black--light.t-normal"));
+					.findElement(By.cssSelector(Selectors.CONNECTION_OCCUPATION_SELECTOR));
 			connectionData.setOccupation(connectionOccupation.getText());
 			// Get connection time
 			WebElement connectionTime = listItem
-					.findElement(By.cssSelector("time.time-badge.t-12.t-black--light.t-normal"));
+					.findElement(By.cssSelector(Selectors.CONNECTION_DURATION_SELECTOR));
 			connectionData.setConnectionDuration(connectionTime.getText());
 		} catch (NoSuchElementException e) {
 			System.err.println("Error finding elements for connection data: " + e.getMessage());
